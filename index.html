@@ -1,0 +1,1092 @@
+
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>FLAG WAR 3D INFINITY 100000000000X</title>
+<script src="https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.min.js"></script>
+<style>
+:root{
+ --bg:#050816;--panel:#0c1730;--line:#174c70;
+ --cyan:#00eaff;--blue:#168cff;--purple:#a855f7;
+ --pink:#ff36a8;--text:#e9faff;--muted:#91a9c5;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);
+ font-family:Arial,"Microsoft JhengHei",sans-serif}
+button,input,select{font:inherit}
+button{
+ background:linear-gradient(135deg,#102b50,#164d75);
+ border:1px solid #087caa;color:white;border-radius:8px;
+ padding:10px 14px;cursor:pointer;margin:3px;
+ transition:.15s
+}
+button:hover{border-color:var(--cyan);box-shadow:0 0 13px #00d9ff55}
+button:disabled{opacity:.4;cursor:not-allowed}
+input,select{
+ background:#071326;border:1px solid #285071;color:white;
+ border-radius:7px;padding:10px;margin:4px;max-width:100%
+}
+header{
+ display:flex;justify-content:space-between;align-items:center;
+ flex-wrap:wrap;gap:10px;padding:14px 20px;
+ background:#08152b;border-bottom:1px solid #075a83;
+ box-shadow:0 0 20px #00d9ff22
+}
+.logo{font-size:21px;font-weight:900;color:var(--cyan);letter-spacing:1px}
+#app{max-width:1350px;margin:auto;padding:14px}
+nav{display:flex;flex-wrap:wrap;gap:5px;margin-bottom:14px}
+nav button{flex:1;min-width:95px}
+.page{display:none}
+.page.active{display:block}
+.panel{
+ background:linear-gradient(145deg,#101e39,#091326);
+ border:1px solid var(--line);border-radius:12px;
+ padding:16px;margin:12px 0;box-shadow:0 0 20px #007bba0c
+}
+h1,h2,h3{color:var(--cyan)}
+h2{font-size:21px}
+h3{font-size:16px}
+.muted{color:var(--muted);font-size:13px}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:10px}
+.card{
+ background:#101f39;border:1px solid #24476b;
+ border-radius:10px;padding:13px;min-width:0
+}
+.card strong{display:block;color:#c7f7ff;margin-bottom:7px}
+.stat{font-size:24px;color:var(--cyan);font-weight:bold}
+.tag{display:inline-block;padding:4px 8px;border-radius:5px;
+ background:#123d5b;color:#8eeaff;font-size:12px;margin:3px}
+.bigbutton{padding:14px 20px;font-size:16px}
+.hero{
+ padding:35px 20px;border:1px solid #087fa7;border-radius:15px;
+ background:radial-gradient(ellipse at 50% 0%,#154f77,#0a1530 55%,#060a18);
+ text-align:center;box-shadow:0 0 35px #00d9ff19
+}
+.hero h1{font-size:clamp(24px,5vw,48px);text-shadow:0 0 20px #00eaff}
+#toast{
+ position:fixed;bottom:20px;left:50%;transform:translateX(-50%);
+ padding:12px 20px;background:#123e62;border:1px solid var(--cyan);
+ border-radius:9px;display:none;z-index:50
+}
+#game{
+ display:none;position:fixed;inset:0;background:#030713;z-index:20
+}
+#game canvas{display:block}
+#hud{
+ position:absolute;top:10px;left:10px;right:10px;
+ display:flex;justify-content:space-between;gap:8px;
+ pointer-events:none
+}
+.hudbox{
+ background:#061326df;border:1px solid #00bde0;
+ border-radius:8px;padding:10px;font-size:13px;
+ text-shadow:0 0 7px #00bde0
+}
+#crosshair{
+ position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);
+ font-size:25px;color:#00f5ff;pointer-events:none;
+ text-shadow:0 0 10px #00f5ff
+}
+#gameHelp{
+ position:absolute;bottom:12px;left:12px;
+ background:#061326df;border:1px solid #16769c;
+ padding:10px;border-radius:9px;font-size:12px
+}
+#gameHelp button{pointer-events:auto}
+#gameEnd{
+ display:none;position:absolute;inset:0;background:#020713eF;
+ align-items:center;justify-content:center;text-align:center
+}
+#gameEnd .panel{max-width:450px;width:90%}
+#login{
+ max-width:440px;margin:9vh auto;text-align:center
+}
+#login input{width:95%}
+#login button{width:95%}
+#login h1{font-size:30px}
+#mechStage{
+ height:260px;border:1px solid #16658b;border-radius:12px;
+ background:radial-gradient(ellipse at center,#174d70,#080f22 70%);
+ display:flex;align-items:center;justify-content:center;
+ font-size:90px;text-shadow:0 0 30px var(--cyan)
+}
+.bar{height:9px;background:#1a2c43;border-radius:8px;overflow:hidden}
+.bar span{display:block;height:100%;background:linear-gradient(90deg,#00aaff,#00ffee)}
+footer{text-align:center;color:#637c9a;padding:25px}
+@media(max-width:600px){
+ #app{padding:7px}.logo{font-size:16px}
+ .panel{padding:12px}
+ #gameHelp{max-width:85%;font-size:11px}
+}
+</style>
+</head>
+<body>
+
+<header>
+ <div class="logo">✦ FLAG WAR 3D INFINITY</div>
+ <div id="headerPlayer">未登入</div>
+</header>
+
+<section id="login" class="panel">
+ <h1>✦ INFINITY NEON ✦</h1>
+ <p class="muted">星際戰場指揮系統</p>
+ <input id="loginName" placeholder="輸入玩家名稱" maxlength="16">
+ <input id="loginPassword" type="password" placeholder="展示版密碼">
+ <button onclick="login()">登入／建立帳號</button>
+ <button onclick="guest()">訪客進入</button>
+ <p class="muted">展示版帳號保存在目前瀏覽器，不代表真實網路驗證。</p>
+</section>
+
+<div id="app" style="display:none">
+<nav>
+ <button onclick="showPage('home')">主基地</button>
+ <button onclick="showPage('battle')">戰鬥中心</button>
+ <button onclick="showPage('mech')">機甲展示</button>
+ <button onclick="showPage('shop')">星際商店</button>
+ <button onclick="showPage('inventory')">裝備庫</button>
+ <button onclick="showPage('clan')">戰隊中心</button>
+ <button onclick="showPage('rank')">排位競技</button>
+ <button onclick="showPage('replay')">戰鬥回放</button>
+ <button onclick="showPage('settings')">設定</button>
+</nav>
+
+<!-- HOME -->
+<section id="home" class="page active">
+ <div class="hero">
+  <h1>FLAG WAR 3D</h1>
+  <h2>INFINITY 100000000000X</h2>
+  <p>NEON SCI-FI BATTLE COMMAND</p>
+  <button class="bigbutton" onclick="showPage('battle')">進入戰鬥</button>
+ </div>
+ <div class="panel">
+  <h2>玩家指揮中心</h2>
+  <div class="grid">
+   <div class="card">玩家名稱<strong id="pName">玩家</strong></div>
+   <div class="card">玩家等級<strong class="stat" id="pLevel">1</strong></div>
+   <div class="card">金幣<strong class="stat" id="pCoins">500</strong></div>
+   <div class="card">經驗值<strong id="pXP">0</strong></div>
+   <div class="card">勝場<strong id="pWins">0</strong></div>
+   <div class="card">戰鬥場次<strong id="pBattles">0</strong></div>
+  </div>
+  <h3>玩家經驗值</h3>
+  <div class="bar"><span id="xpBar" style="width:0%"></span></div>
+  <p class="muted" id="xpText"></p>
+ </div>
+ <div class="panel">
+  <h2>星際總部</h2>
+  <div class="grid">
+   <div class="card"><strong>指揮中心</strong>管理玩家資料及戰鬥資訊<button onclick="showPage('rank')">查看資料</button></div>
+   <div class="card"><strong>裝備工廠</strong>管理武器及防具<button onclick="showPage('inventory')">管理裝備</button></div>
+   <div class="card"><strong>機甲展示廳</strong>瀏覽機甲外觀<button onclick="showPage('mech')">進入展示廳</button></div>
+   <div class="card"><strong>戰隊總部</strong>建立自己的戰隊<button onclick="showPage('clan')">進入戰隊</button></div>
+  </div>
+ </div>
+ <div class="panel">
+  <h2>最新戰鬥紀錄</h2>
+  <div id="homeRecords">尚無紀錄</div>
+ </div>
+</section>
+
+<!-- BATTLE -->
+<section id="battle" class="page">
+ <div class="panel">
+  <h2>戰鬥中心</h2>
+  <div class="grid">
+   <div class="card">
+    <strong>遊戲模式</strong>
+    <select id="gameMode">
+     <option value="flag">奪旗模式</option>
+     <option value="team">團隊對戰</option>
+     <option value="zone">據點占領</option>
+     <option value="survival">生存挑戰</option>
+     <option value="time">限時挑戰</option>
+     <option value="training">訓練模式</option>
+    </select>
+   </div>
+   <div class="card">
+    <strong>戰場地圖</strong>
+    <select id="gameMap">
+     <option value="0">霓虹都市</option>
+     <option value="1">星際基地</option>
+     <option value="2">沙漠前線</option>
+     <option value="3">冰雪要塞</option>
+     <option value="4">森林基地</option>
+     <option value="5">太空平台</option>
+    </select>
+   </div>
+   <div class="card">
+    <strong>AI 難度</strong>
+    <select id="gameDifficulty">
+     <option value="1">新手</option>
+     <option value="2">普通</option>
+     <option value="3">菁英</option>
+    </select>
+   </div>
+  </div>
+  <p><button class="bigbutton" onclick="startGame()">✦ 啟動 3D 戰場</button></p>
+  <p class="muted">WASD 移動｜滑鼠瞄準｜左鍵發射｜E 互動｜Shift 加速｜ESC 釋放滑鼠</p>
+ </div>
+ <div class="panel">
+  <h2>戰場資訊</h2>
+  <div class="grid">
+   <div class="card">地圖<strong>霓虹都市</strong></div>
+   <div class="card">戰鬥方式<strong>第一人稱 FPS</strong></div>
+   <div class="card">AI 敵人<strong>6 名</strong></div>
+   <div class="card">戰鬥時間<strong>180 秒</strong></div>
+  </div>
+ </div>
+</section>
+
+<!-- MECH -->
+<section id="mech" class="page">
+ <div class="panel">
+  <h2>星際機甲展示廳</h2>
+  <div id="mechStage">🤖</div>
+  <h2 id="mechName">NEON GUARD</h2>
+  <p id="mechDesc">標準霓虹守衛機甲</p>
+  <p>目前機甲：<strong id="currentMech">NEON GUARD</strong></p>
+  <div id="mechList" class="grid"></div>
+ </div>
+</section>
+
+<!-- SHOP -->
+<section id="shop" class="page">
+ <div class="panel">
+  <h2>星際商店</h2>
+  <p>玩家金幣：<strong id="shopCoins">500</strong></p>
+  <div class="grid" id="shopList"></div>
+ </div>
+ <div class="panel">
+  <h3>會員展示方案</h3>
+  <div class="grid">
+   <div class="card"><strong>普通會員</strong>免費<button onclick="selectPlan('普通')">選擇</button></div>
+   <div class="card"><strong>進階會員</strong>展示價 100 金幣<button onclick="selectPlan('進階')">模擬購買</button></div>
+   <div class="card"><strong>傳說會員</strong>展示價 300 金幣<button onclick="selectPlan('傳說')">模擬購買</button></div>
+  </div>
+  <p class="muted">此處僅為遊戲內虛擬方案，不會收取真實款項。</p>
+ </div>
+</section>
+
+<!-- INVENTORY -->
+<section id="inventory" class="page">
+ <div class="panel">
+  <h2>裝備庫</h2>
+  <div id="inventoryList" class="grid"></div>
+ </div>
+</section>
+
+<!-- CLAN -->
+<section id="clan" class="page">
+ <div class="panel">
+  <h2>戰隊總部</h2>
+  <p>建立自己的星際戰隊。</p>
+  <input id="clanInput" placeholder="輸入戰隊名稱" maxlength="20">
+  <input id="clanBadge" placeholder="戰隊徽章，例如 NEON">
+  <button onclick="createClan()">建立／更新戰隊</button>
+  <div class="card">
+   <strong>目前戰隊</strong>
+   <h2 id="clanTitle">尚未加入戰隊</h2>
+   <p id="clanEmblem"></p>
+   <p>戰隊積分：<strong id="clanScore">0</strong></p>
+  </div>
+  <p class="muted">戰隊目前為本機資料，尚未同步至其他玩家。</p>
+ </div>
+</section>
+
+<!-- RANK -->
+<section id="rank" class="page">
+ <div class="panel">
+  <h2>排位競技</h2>
+  <p>目前段位：<strong id="rankName" class="stat">青銅</strong></p>
+  <p>排位積分：<strong id="rankPoints">0</strong></p>
+  <div class="bar"><span id="rankBar" style="width:0%"></span></div>
+  <p class="muted">勝利增加積分，完成戰鬥也可取得少量積分。</p>
+  <div id="rankInfo"></div>
+ </div>
+ <div class="panel">
+  <h2>戰績紀錄</h2>
+  <div id="rankRecords"></div>
+ </div>
+</section>
+
+<!-- REPLAY -->
+<section id="replay" class="page">
+ <div class="panel">
+  <h2>戰鬥回放中心</h2>
+  <p class="muted">系統保存最近 10 場戰鬥的移動路線及戰鬥事件。</p>
+  <div id="replayList"></div>
+  <div id="replayOutput" class="card">選擇一場戰鬥，播放路線紀錄。</div>
+  <button onclick="stopReplay()">停止回放</button>
+ </div>
+</section>
+
+<!-- SETTINGS -->
+<section id="settings" class="page">
+ <div class="panel">
+  <h2>系統設定</h2>
+  <p>畫質
+   <select id="quality"><option value="high">高</option><option value="medium">中</option><option value="low">低</option></select>
+  </p>
+  <p>音效
+   <select id="sound"><option value="on">開啟</option><option value="off">關閉</option></select>
+  </p>
+  <button onclick="saveSettings()">保存設定</button>
+  <button onclick="exportPlayer()">匯出玩家資料</button>
+  <button onclick="logout()">登出</button>
+  <p class="muted">本機資料只保存在目前瀏覽器。清除瀏覽器資料可能導致資料遺失。</p>
+ </div>
+ <div class="panel">
+  <h3>伺服器功能說明</h3>
+  <p>目前未連接真實伺服器。以下功能需要後端系統：</p>
+  <ul>
+   <li>跨裝置帳號登入與密碼驗證。</li>
+   <li>即時多人連線與同步戰場。</li>
+   <li>線上好友、戰隊及全球排行榜。</li>
+   <li>雲端保存與伺服器戰鬥回放。</li>
+   <li>真實付款、訂單及會員驗證。</li>
+  </ul>
+ </div>
+</section>
+</div>
+
+<!-- GAME OVERLAY -->
+<div id="game">
+ <div id="hud">
+  <div class="hudbox">
+   <strong id="hudMode">NEON BATTLE</strong><br>
+   <span id="hudScore">藍隊 0 : 0 紅隊</span><br>
+   <span id="hudTime">時間 180</span>
+  </div>
+  <div class="hudbox">
+   <span id="hudHP">能量 100</span><br>
+   <span id="hudKills">擊敗 0</span><br>
+   <span id="hudAmmo">能量彈 ∞</span>
+  </div>
+ </div>
+ <div id="crosshair">+</div>
+ <div id="gameHelp">
+  WASD 移動｜滑鼠瞄準｜左鍵發射｜E 互動｜Shift 加速<br>
+  <button onclick="leaveGame()">離開戰場</button>
+  <button onclick="togglePause()">暫停／繼續</button>
+ </div>
+ <div id="gameEnd">
+  <div class="panel">
+   <h1 id="endTitle">戰鬥結束</h1>
+   <p id="endDescription"></p>
+   <button onclick="leaveGame()">返回總部</button>
+  </div>
+ </div>
+</div>
+
+<div id="toast"></div>
+<footer>FLAG WAR 3D INFINITY · NEON EDITION · LOCAL DEMO</footer>
+
+<script>
+"use strict";
+
+/* =========================================
+   PLAYER DATA
+========================================= */
+const SAVE_KEY="FW_INFINITY_NEON_V1";
+const $=id=>document.getElementById(id);
+
+const shopItems=[
+ {name:"NEON PULSE",price:0,type:"武器",icon:"🔫",desc:"標準能量發射器"},
+ {name:"CYBER RIFLE",price:150,type:"武器",icon:"⚡",desc:"藍色霓虹能量槍"},
+ {name:"PLASMA CORE",price:250,type:"武器",icon:"🔵",desc:"電漿能量外觀"},
+ {name:"STAR CANNON",price:400,type:"武器",icon:"🌟",desc:"星際光束外觀"},
+ {name:"NEON HELMET",price:100,type:"防具",icon:"⛑️",desc:"霓虹頭盔"},
+ {name:"CYBER ARMOR",price:200,type:"防具",icon:"🛡️",desc:"未來科技盔甲"},
+ {name:"GOLD ARMOR",price:500,type:"防具",icon:"🥇",desc:"黃金戰甲外觀"},
+ {name:"ENERGY SHIELD",price:350,type:"防具",icon:"🔰",desc:"能量護盾外觀"},
+ {name:"BLUE AURA",price:180,type:"外觀",icon:"💠",desc:"藍色光環"},
+ {name:"PURPLE AURA",price:180,type:"外觀",icon:"🟣",desc:"紫色光環"},
+ {name:"GOLD SOLDIER",price:550,type:"外觀",icon:"👑",desc:"黃金士兵造型"},
+ {name:"SPACE SOLDIER",price:700,type:"外觀",icon:"🚀",desc:"星際士兵造型"},
+ {name:"VICTORY EFFECT",price:200,type:"收藏",icon:"✨",desc:"勝利特效"},
+ {name:"NEON TITLE",price:300,type:"收藏",icon:"🏆",desc:"霓虹稱號"},
+ {name:"STAR FLAG",price:250,type:"收藏",icon:"🚩",desc:"星際基地旗幟"},
+ {name:"MECH SKIN",price:600,type:"機甲",icon:"🤖",desc:"機甲外觀"},
+ {name:"NOVA MECH",price:900,type:"機甲",icon:"🦾",desc:"NOVA 機甲外觀"},
+ {name:"GALAXY MECH",price:1200,type:"機甲",icon:"🌌",desc:"GALAXY 機甲外觀"}
+];
+
+const mechData=[
+ {name:"NEON GUARD",icon:"🤖",price:0,desc:"標準霓虹守衛機甲。"},
+ {name:"CYBER TITAN",icon:"🦾",price:300,desc:"重型未來科技機甲。"},
+ {name:"NOVA STRIKER",icon:"🚀",price:500,desc:"高速星際機甲。"},
+ {name:"GALAXY PRIME",icon:"🌌",price:900,desc:"傳說級星河機甲。"}
+];
+
+function newPlayer(name){
+ return {
+  name,coins:1000,xp:0,level:1,wins:0,battles:0,kills:0,
+  rank:0,owned:[0],equipped:0,mech:0,ownedMechs:[0],
+  clan:"",clanBadge:"",clanScore:0,
+  records:[],replays:[],settings:{quality:"high",sound:"on"}
+ };
+}
+let player=null;
+
+function loadPlayer(){
+ try{
+  const data=JSON.parse(localStorage.getItem(SAVE_KEY));
+  if(!data)return null;
+  const defaults=newPlayer(data.name||"玩家");
+  return {...defaults,...data,
+   settings:{...defaults.settings,...data.settings},
+   owned:Array.isArray(data.owned)?data.owned:[0],
+   ownedMechs:Array.isArray(data.ownedMechs)?data.ownedMechs:[0],
+   records:Array.isArray(data.records)?data.records:[],
+   replays:Array.isArray(data.replays)?data.replays:[]
+  };
+ }catch(e){return null}
+}
+function save(){
+ if(!player)return;
+ localStorage.setItem(SAVE_KEY,JSON.stringify(player));
+ refreshUI();
+}
+function login(){
+ const name=$("loginName").value.trim();
+ const password=$("loginPassword").value;
+ if(!name||!password){notify("請輸入玩家名稱及展示版密碼");return}
+ const existing=loadPlayer();
+ if(existing&&existing.name===name){
+  player=existing;
+  notify("已載入本機玩家資料");
+ }else{
+  player=newPlayer(name);
+  save();
+  notify("玩家帳號已建立");
+ }
+ enterApp();
+}
+function guest(){
+ player=loadPlayer()||newPlayer("NEON GUEST");
+ enterApp();
+}
+function enterApp(){
+ $("login").style.display="none";
+ $("app").style.display="block";
+ renderAll();
+}
+function logout(){
+ save();player=null;
+ $("app").style.display="none";
+ $("login").style.display="block";
+}
+function notify(message){
+ $("toast").textContent=message;
+ $("toast").style.display="block";
+ clearTimeout(notify.timer);
+ notify.timer=setTimeout(()=>$("toast").style.display="none",2300);
+}
+
+/* =========================================
+   NAVIGATION / PLAYER UI
+========================================= */
+function showPage(id){
+ document.querySelectorAll(".page").forEach(p=>p.classList.remove("active"));
+ $(id).classList.add("active");
+ renderAll();
+}
+function refreshUI(){
+ if(!player)return;
+ $("headerPlayer").textContent=
+  player.name+"　LV."+player.level+"　✦ "+player.coins;
+ $("pName").textContent=player.name;
+ $("pLevel").textContent=player.level;
+ $("pCoins").textContent=player.coins;
+ $("pXP").textContent=player.xp;
+ $("pWins").textContent=player.wins;
+ $("pBattles").textContent=player.battles;
+ $("shopCoins").textContent=player.coins;
+
+ const xpNeed=player.level*150;
+ $("xpBar").style.width=Math.min(100,player.xp/xpNeed*100)+"%";
+ $("xpText").textContent=player.xp+" / "+xpNeed+" XP";
+ $("homeRecords").innerHTML=player.records.slice(-5).reverse()
+  .map(x=>"<p>"+escapeHTML(x) +"</p>").join("")||"尚無紀錄";
+
+ $("clanTitle").textContent=player.clan||"尚未加入戰隊";
+ $("clanEmblem").textContent=player.clanBadge?"徽章："+player.clanBadge:"";
+ $("clanScore").textContent=player.clanScore;
+
+ const ranks=[
+  ["青銅",0],["白銀",100],["黃金",250],["白金",450],
+  ["鑽石",700],["大師",1000],["傳說",1500]
+ ];
+ let current=ranks[0];
+ for(const r of ranks){if(player.rank>=r[1])current=r}
+ $("rankName").textContent=current[0];
+ $("rankPoints").textContent=player.rank;
+ const next=ranks.find(r=>r[1]>player.rank);
+ $("rankBar").style.width=next?
+  Math.min(100,(player.rank-current[1])/(next[1]-current[1])*100)+"%":"100%";
+ $("rankInfo").textContent=next?
+  "距離 "+next[0]+" 還差 "+(next[1]-player.rank)+" 分":"已達最高段位";
+ $("rankRecords").innerHTML=player.records.slice().reverse()
+  .map(x=>"<p>"+escapeHTML(x)+"</p>").join("")||"尚無紀錄";
+}
+function escapeHTML(s){
+ return String(s).replace(/[&<>"']/g,c=>({
+  "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"
+ }[c]));
+}
+
+/* =========================================
+   SHOP / INVENTORY
+========================================= */
+function renderShop(){
+ $("shopList").innerHTML=shopItems.map((it,i)=>`
+  <div class="card">
+   <strong>${it.icon} ${it.name}</strong>
+   <span class="tag">${it.type}</span>
+   <p class="muted">${it.desc}</p>
+   <p>價格：${it.price} 金幣</p>
+   ${player.owned.includes(i)?
+    '<span class="tag">已擁有</span>':
+    `<button onclick="buyItem(${i})">購買</button>`}
+  </div>`).join("");
+}
+function buyItem(i){
+ const it=shopItems[i];
+ if(!it||player.owned.includes(i)){notify("此物品已擁有");return}
+ if(player.coins<it.price){notify("金幣不足");return}
+ player.coins-=it.price;
+ player.owned.push(i);
+ save();renderAll();
+ notify("成功購買 "+it.name);
+}
+function renderInventory(){
+ $("inventoryList").innerHTML=player.owned.map(i=>{
+  const it=shopItems[i];
+  if(!it)return "";
+  return `<div class="card">
+   <strong>${it.icon} ${it.name}</strong>
+   <span class="tag">${it.type}</span>
+   <p>${player.equipped===i?"目前裝備中":""}</p>
+   <button onclick="equipItem(${i})">${player.equipped===i?"已裝備":"裝備"}</button>
+  </div>`;
+ }).join("");
+}
+function equipItem(i){
+ if(!player.owned.includes(i))return;
+ player.equipped=i;
+ save();renderAll();
+ notify("裝備完成："+shopItems[i].name);
+}
+function selectPlan(plan){
+ notify("已選擇 "+plan+" 會員展示方案，沒有進行真實付款");
+}
+
+/* =========================================
+   MECH SHOWROOM
+========================================= */
+function renderMechs(){
+ const m=mechData[player.mech]||mechData[0];
+ $("mechStage").textContent=m.icon;
+ $("mechName").textContent=m.name;
+ $("mechDesc").textContent=m.desc;
+ $("currentMech").textContent=m.name;
+ $("mechList").innerHTML=mechData.map((x,i)=>`
+  <div class="card">
+   <strong>${x.icon} ${x.name}</strong>
+   <p>${x.price===0?"免費":x.price+" 金幣"}</p>
+   ${player.ownedMechs.includes(i)?
+    `<button onclick="selectMech(${i})">選擇機甲</button>`:
+    `<button onclick="buyMech(${i})">解鎖機甲</button>`}
+  </div>`).join("");
+}
+function buyMech(i){
+ const m=mechData[i];
+ if(player.ownedMechs.includes(i))return;
+ if(player.coins<m.price){notify("金幣不足");return}
+ player.coins-=m.price;
+ player.ownedMechs.push(i);
+ player.mech=i;
+ save();renderAll();notify("已解鎖 "+m.name);
+}
+function selectMech(i){
+ if(!player.ownedMechs.includes(i))return;
+ player.mech=i;save();renderMechs();notify("已選擇 "+mechData[i].name);
+}
+
+/* =========================================
+   CLAN / RANK / REPLAY
+========================================= */
+function createClan(){
+ const name=$("clanInput").value.trim();
+ const badge=$("clanBadge").value.trim();
+ if(!name){notify("請輸入戰隊名稱");return}
+ player.clan=name;
+ player.clanBadge=badge||"NEON";
+ save();notify("戰隊建立完成");
+}
+function renderReplay(){
+ $("replayList").innerHTML=player.replays.map((r,i)=>`
+  <div class="card">
+   <strong>戰鬥回放 #${i+1}</strong>
+   <p>${escapeHTML(r.date)}｜${escapeHTML(r.mode)}｜${r.result}</p>
+   <p>記錄點：${r.path.length}</p>
+   <button onclick="playReplay(${i})">播放路線</button>
+  </div>`).join("")||"尚無戰鬥回放";
+}
+let replayTimer=null;
+function stopReplay(){
+ if(replayTimer)clearInterval(replayTimer);
+ replayTimer=null;
+ $("replayOutput").textContent="回放已停止";
+}
+function playReplay(i){
+ stopReplay();
+ const r=player.replays[i];
+ if(!r)return;
+ let n=0;
+ $("replayOutput").innerHTML="<strong>正在播放回放...</strong><p id='replayProgress'></p>";
+ replayTimer=setInterval(()=>{
+  if(n>=r.path.length){stopReplay();$("replayOutput").textContent="回放完成";return}
+  const p=r.path[n++];
+  const el=$("replayProgress");
+  if(el)el.textContent=
+   "記錄 "+n+" / "+r.path.length+
+   "　位置 X:"+p.x.toFixed(1)+" Z:"+p.z.toFixed(1)+
+   "　擊敗："+p.k;
+ },120);
+}
+function saveSettings(){
+ player.settings.quality=$("quality").value;
+ player.settings.sound=$("sound").value;
+ save();notify("設定已保存");
+}
+function exportPlayer(){
+ const blob=new Blob([JSON.stringify(player,null,2)],{type:"application/json"});
+ const url=URL.createObjectURL(blob);
+ const a=document.createElement("a");
+ a.href=url;a.download="flag-war-player.json";a.click();
+ URL.revokeObjectURL(url);
+}
+function renderAll(){
+ if(!player)return;
+ refreshUI();renderShop();renderInventory();renderMechs();renderReplay();
+ $("quality").value=player.settings.quality||"high";
+ $("sound").value=player.settings.sound||"on";
+}
+
+/* =========================================
+   THREE.JS GAME ENGINE
+========================================= */
+let game=null;
+const mapColors=[0x101c45,0x263e65,0x9a7847,0xc7d9ed,0x31553e,0x283b70];
+
+function startGame(){
+ if(!window.THREE){notify("3D 引擎載入失敗，請確認網路連線");return}
+ $("game").style.display="block";
+ $("gameEnd").style.display="none";
+ try{createBattle()}catch(err){
+  console.error(err);
+  notify("戰場啟動失敗："+err.message);
+  $("game").style.display="none";
+  cleanupGame();
+ }
+}
+function createBattle(){
+ cleanupGame();
+ const T=THREE;
+ const scene=new T.Scene();
+ const mapIndex=Number($("gameMap").value);
+ const mode=$("gameMode").value;
+ const difficulty=Number($("gameDifficulty").value);
+ const backgroundColor=mapColors[mapIndex];
+ scene.background=new T.Color(backgroundColor);
+ scene.fog=new T.Fog(backgroundColor,35,120);
+
+ const camera=new T.PerspectiveCamera(76,innerWidth/innerHeight,.1,180);
+ camera.position.set(0,1.7,8);
+
+ const renderer=new T.WebGLRenderer({antialias:true});
+ const quality=player.settings.quality||"high";
+ renderer.setPixelRatio(Math.min(devicePixelRatio,quality==="low"?1:quality==="medium"?1.3:1.7));
+ renderer.setSize(innerWidth,innerHeight);
+ renderer.domElement.style.display="block";
+ $("game").insertBefore(renderer.domElement,$("hud"));
+
+ scene.add(new T.HemisphereLight(0x80dfff,0x142044,2));
+ const sun=new T.DirectionalLight(0x91f4ff,2);
+ sun.position.set(10,20,10);scene.add(sun);
+
+ const mats={
+  floor:new T.MeshStandardMaterial({color:backgroundColor,roughness:.9}),
+  wall:new T.MeshStandardMaterial({color:0x142c51,metalness:.65,roughness:.4}),
+  cyan:new T.MeshStandardMaterial({color:0x00cfff,emissive:0x005577,emissiveIntensity:1.4}),
+  red:new T.MeshStandardMaterial({color:0xff386d,emissive:0x650020,emissiveIntensity:1.3}),
+  blue:new T.MeshStandardMaterial({color:0x147dff,emissive:0x002b77,emissiveIntensity:1.2}),
+  bot:new T.MeshStandardMaterial({color:0xa42d68,emissive:0x39001c})
+ };
+
+ const floor=new T.Mesh(new T.PlaneGeometry(130,130),mats.floor);
+ floor.rotation.x=-Math.PI/2;scene.add(floor);
+
+ // Neon floor grid
+ const grid=new T.GridHelper(130,65,0x00bde8,0x16436d);
+ grid.position.y=.025;scene.add(grid);
+
+ function box(x,y,z,w,h,d,material){
+  const mesh=new T.Mesh(new T.BoxGeometry(w,h,d),material);
+  mesh.position.set(x,y,z);scene.add(mesh);return mesh;
+ }
+ function neonLine(x,y,z,w,h,d){
+  const mesh=new T.Mesh(new T.BoxGeometry(w,h,d),mats.cyan);
+  mesh.position.set(x,y,z);scene.add(mesh);return mesh;
+ }
+
+ // City structures
+ for(let i=0;i<38;i++){
+  const x=(Math.random()-.5)*100;
+  const z=(Math.random()-.5)*100;
+  if(Math.abs(x)<9&&Math.abs(z)<9)continue;
+  const h=3+Math.random()*11;
+  box(x,h/2,z,3+Math.random()*5,h,3+Math.random()*5,mats.wall);
+  neonLine(x,h*.65,z,3.1,.08,.08);
+ }
+ // Base buildings
+ box(-27,2,0,8,4,10,mats.blue);
+ box(27,2,0,8,4,10,mats.red);
+ neonLine(-27,4.1,0,8,.12,.12);
+ neonLine(27,4.1,0,8,.12,.12);
+
+ // Player body and weapon visible in FPS
+ const playerGroup=new T.Group();
+ const armMat=new T.MeshStandardMaterial({color:0x155e93,metalness:.6});
+ const arm=new T.Mesh(new T.BoxGeometry(.22,.22,.8),armMat);
+ arm.position.set(.38,-.35,-.65);camera.add(arm);
+ const gun=new T.Group();
+ const gunBody=new T.Mesh(new T.BoxGeometry(.22,.18,.85),
+  new T.MeshStandardMaterial({color:0x1c334c,metalness:.8}));
+ gunBody.position.set(.48,-.33,-.85);camera.add(gunBody);
+ const barrel=new T.Mesh(new T.CylinderGeometry(.055,.055,.3,12),
+  new T.MeshStandardMaterial({color:0x00eaff,emissive:0x00aaff,emissiveIntensity:2}));
+ barrel.rotation.x=Math.PI/2;barrel.position.set(.48,-.3,-1.28);camera.add(barrel);
+ scene.add(camera);
+
+ const bots=[];
+ function createBot(x,z,index){
+  const group=new T.Group();
+  const body=new T.Mesh(new T.BoxGeometry(.8,1.15,.48),mats.bot);
+  body.position.y=1.15;group.add(body);
+  const head=new T.Mesh(new T.SphereGeometry(.3,12,10),
+   new T.MeshStandardMaterial({color:0xd7a6ba}));
+  head.position.y=1.95;group.add(head);
+  const visor=new T.Mesh(new T.BoxGeometry(.42,.1,.08),mats.red);
+  visor.position.set(0,2,.22);group.add(visor);
+  const gunMesh=new T.Mesh(new T.BoxGeometry(.15,.15,.7),mats.wall);
+  gunMesh.position.set(.48,1.25,-.25);group.add(gunMesh);
+  group.position.set(x,0,z);scene.add(group);
+  return {group,hp:100,alive:true,cooldown:Math.random()*100,index};
+ }
+ for(let i=0;i<7;i++){
+  bots.push(createBot(18+Math.random()*18,-25+Math.random()*50,i));
+ }
+
+ // Capture flags
+ function flagAt(x,color){
+  const pole=new T.Mesh(new T.CylinderGeometry(.06,.06,3,8),mats.wall);
+  pole.position.set(x,1.5,0);scene.add(pole);
+  const flag=new T.Mesh(new T.PlaneGeometry(1.5,.9),
+   new T.MeshStandardMaterial({color,side:T.DoubleSide,emissive:color,emissiveIntensity:.3}));
+  flag.position.set(x+.7,2.35,0);scene.add(flag);
+  return new T.Group(); // visual marker is the pole and flag
+ }
+ flagAt(-27,0x168cff);flagAt(27,0xff386d);
+
+ const playerState={
+  x:0,z:8,yaw:0,pitch:0,hp:100,kills:0,blue:0,red:0,
+  time:180,paused:false,over:false,flag:false,
+  shots:[],events:[],path:[],lastRecord:0,lastShot:0
+ };
+ const gameState={scene,camera,renderer,bots,state:playerState,mode,keys:{},handlers:{}};
+ game=gameState;
+
+ function resize(){
+  if(!game||game!==gameState)return;
+  camera.aspect=innerWidth/innerHeight;
+  camera.updateProjectionMatrix();
+  renderer.setSize(innerWidth,innerHeight);
+ }
+ function onKeyDown(e){
+  const k=e.key.toLowerCase();
+  gameState.keys[k]=true;
+  if(k==="e")interact();
+  if(k==="escape")document.exitPointerLock?.();
+ }
+ function onKeyUp(e){gameState.keys[e.key.toLowerCase()]=false}
+ function onMouseMove(e){
+  if(document.pointerLockElement!==renderer.domElement||playerState.paused)return;
+  playerState.yaw-=e.movementX*.002;
+  playerState.pitch-=e.movementY*.002;
+  playerState.pitch=Math.max(-1.25,Math.min(1.25,playerState.pitch));
+ }
+ function onMouseDown(e){
+  if(e.button===0)shoot();
+ }
+ function shoot(){
+  if(playerState.over||playerState.paused)return;
+  if(Date.now()-playerState.lastShot<280)return;
+  playerState.lastShot=Date.now();
+  const dir=new T.Vector3(
+   -Math.sin(playerState.yaw)*Math.cos(playerState.pitch),
+   Math.sin(playerState.pitch),
+   -Math.cos(playerState.yaw)*Math.cos(playerState.pitch)
+  ).normalize();
+  const projectile=new T.Mesh(
+   new T.SphereGeometry(.12,8,8),
+   new T.MeshBasicMaterial({color:0x00f5ff})
+  );
+  projectile.position.copy(camera.position);
+  scene.add(projectile);
+  playerState.shots.push({mesh:projectile,dir,life:65});
+  playerState.events.push("發射能量彈");
+ }
+ function interact(){
+  if(!game||game!==gameState||playerState.over)return;
+  if(mode==="flag"){
+   if(Math.abs(playerState.x-27)<7&&Math.abs(playerState.z)<7){
+    playerState.flag=true;
+    playerState.events.push("取得敵方旗幟");
+    notify("已取得敵方旗幟！返回己方基地");
+   }else if(playerState.flag&&Math.abs(playerState.x+27)<7&&Math.abs(playerState.z)<7){
+    playerState.blue++;
+    playerState.flag=false;
+    playerState.events.push("成功奪旗");
+    notify("成功奪旗！");
+   }else{
+    notify("靠近旗幟或基地再按 E");
+   }
+  }else if(mode==="zone"){
+   playerState.blue++;
+   playerState.events.push("占領據點");
+   notify("據點占領成功");
+  }else{
+   notify("互動完成");
+  }
+ }
+ function onClickCanvas(){
+  if(!playerState.paused)renderer.domElement.requestPointerLock?.();
+ }
+ renderer.domElement.addEventListener("click",onClickCanvas);
+ window.addEventListener("keydown",onKeyDown);
+ window.addEventListener("keyup",onKeyUp);
+ window.addEventListener("resize",resize);
+ document.addEventListener("mousemove",onMouseMove);
+ renderer.domElement.addEventListener("mousedown",onMouseDown);
+
+ gameState.handlers={onKeyDown,onKeyUp,onMouseMove,onMouseDown,resize,onClickCanvas};
+
+ $("hudMode").textContent=$("gameMode").selectedOptions[0].textContent;
+ playerState.events.push("進入戰場");
+
+ let last=performance.now();
+ function animate(now){
+  if(!game||game!==gameState||playerState.over)return;
+  requestAnimationFrame(animate);
+  const dt=Math.min((now-last)/16.67,2);last=now;
+  if(!playerState.paused){
+   const s=gameState.keys;
+   const speed=(s.shift?0.23:0.12)*dt;
+   const fX=-Math.sin(playerState.yaw),fZ=-Math.cos(playerState.yaw);
+   const rX=Math.cos(playerState.yaw),rZ=-Math.sin(playerState.yaw);
+   if(s.w){playerState.x+=fX*speed;playerState.z+=fZ*speed}
+   if(s.s){playerState.x-=fX*speed;playerState.z-=fZ*speed}
+   if(s.a){playerState.x-=rX*speed;playerState.z-=rZ*speed}
+   if(s.d){playerState.x+=rX*speed;playerState.z+=rZ*speed}
+   playerState.x=Math.max(-59,Math.min(59,playerState.x));
+   playerState.z=Math.max(-59,Math.min(59,playerState.z));
+
+   camera.position.set(playerState.x,1.7,playerState.z);
+   camera.rotation.order="YXZ";
+   camera.rotation.y=playerState.yaw;
+   camera.rotation.x=playerState.pitch;
+
+   // AI movement
+   bots.forEach(bot=>{
+    if(!bot.alive)return;
+    const dx=playerState.x-bot.group.position.x;
+    const dz=playerState.z-bot.group.position.z;
+    const distance=Math.hypot(dx,dz);
+    if(distance>4){
+     const move=(.018*difficulty)*dt;
+     bot.group.position.x+=dx/distance*move;
+     bot.group.position.z+=dz/distance*move;
+    }
+    bot.group.lookAt(playerState.x,1,playerState.z);
+    bot.cooldown-=dt;
+    if(distance<25&&bot.cooldown<=0){
+     bot.cooldown=100+Math.random()*80;
+     if(Math.random()<.25*difficulty){
+      playerState.hp-=difficulty===3?5:3;
+      if(playerState.hp<=0)playerState.hp=0;
+     }
+    }
+   });
+
+   // Player projectiles
+   for(let i=playerState.shots.length-1;i>=0;i--){
+    const shot=playerState.shots[i];
+    shot.mesh.position.addScaledVector(shot.dir,.95*dt);
+    shot.life-=dt;
+    let hit=false;
+    for(const bot of bots){
+     if(!bot.alive)continue;
+     const target=new T.Vector3(
+      bot.group.position.x,1.3,bot.group.position.z
+     );
+     if(shot.mesh.position.distanceTo(target)<1.1){
+      bot.hp-=35;hit=true;
+      playerState.events.push("命中 AI");
+      if(bot.hp<=0){
+       bot.alive=false;scene.remove(bot.group);
+       playerState.kills++;playerState.blue++;
+       playerState.events.push("擊敗 AI");
+      }
+      break;
+     }
+    }
+    if(hit||shot.life<=0){
+     scene.remove(shot.mesh);
+     playerState.shots.splice(i,1);
+    }
+   }
+
+   // Record route for replay
+   if(now-playerState.lastRecord>400){
+    playerState.path.push({
+     x:playerState.x,z:playerState.z,
+     k:playerState.kills
+    });
+    if(playerState.path.length>450)playerState.path.shift();
+    playerState.lastRecord=now;
+   }
+
+   if(playerState.hp<=0){
+    playerState.hp=100;
+    playerState.events.push("能量耗盡後重新啟動");
+    notify("能量重新充滿");
+   }
+
+   if(mode==="flag"&&playerState.blue>=3)finishBattle(true);
+   if(mode==="team"&&playerState.kills>=8)finishBattle(true);
+   if(mode==="zone"&&playerState.blue>=10)finishBattle(true);
+   if(mode==="survival"&&playerState.kills>=5)finishBattle(true);
+   if(mode==="time"&&playerState.kills>=5)finishBattle(true);
+  }
+
+  $("hudScore").textContent="藍隊 "+playerState.blue+" : "+playerState.red+" 紅隊";
+  $("hudTime").textContent="時間 "+playerState.time;
+  $("hudHP").textContent="能量 "+playerState.hp;
+  $("hudKills").textContent="擊敗 "+playerState.kills;
+  renderer.render(scene,camera);
+ }
+ requestAnimationFrame(animate);
+
+ // Game clock
+ gameState.clock=setInterval(()=>{
+  if(!game||game!==gameState||playerState.over||playerState.paused)return;
+  if(mode==="training")return;
+  playerState.time--;
+  if(playerState.time<=0){
+   const won=mode==="survival"?
+    playerState.kills>=3:
+    playerState.blue>=playerState.red;
+   finishBattle(won);
+  }
+ },1000);
+}
+
+/* =========================================
+   GAME RESULT / REPLAY SAVE
+========================================= */
+function finishBattle(win){
+ if(!game||game.state.over)return;
+ const g=game,s=g.state;
+ s.over=true;
+ document.exitPointerLock?.();
+ $("gameEnd").style.display="flex";
+ $("endTitle").textContent=win?"✦ VICTORY":"✦ BATTLE COMPLETE";
+ $("endDescription").textContent=
+  "擊敗："+s.kills+"　戰鬥分數："+s.blue+
+  "　結果："+(win?"勝利":"完成");
+
+ if(g.mode!=="training"){
+  player.battles++;
+  player.kills+=s.kills;
+  player.xp+=win?120:60;
+  player.coins+=win?180:70;
+  player.rank+=win?25:5;
+  player.clanScore+=win?10:2;
+  if(win)player.wins++;
+  while(player.level<1000&&player.xp>=player.level*150){
+   player.xp-=player.level*150;
+   player.level++;
+  }
+  const record=new Date().toLocaleString()+
+   "｜"+(win?"勝利":"完成")+
+   "｜擊敗 "+s.kills+"｜"+g.mode;
+  player.records.push(record);
+  if(player.records.length>50)player.records.shift();
+
+  player.replays.unshift({
+   date:new Date().toLocaleString(),
+   mode:g.mode,
+   result:win?"勝利":"完成",
+   path:s.path.slice(),
+   events:s.events.slice()
+  });
+  player.replays=player.replays.slice(0,10);
+  save();
+ }
+}
+function togglePause(){
+ if(!game||game.state.over)return;
+ game.state.paused=!game.state.paused;
+ notify(game.state.paused?"遊戲已暫停":"繼續戰鬥");
+ if(game.state.paused)document.exitPointerLock?.();
+}
+function cleanupGame(){
+ if(!game)return;
+ clearInterval(game.clock);
+ const h=game.handlers;
+ if(h){
+  window.removeEventListener("keydown",h.onKeyDown);
+  window.removeEventListener("keyup",h.onKeyUp);
+  window.removeEventListener("resize",h.resize);
+  document.removeEventListener("mousemove",h.onMouseMove);
+  game.renderer.domElement.removeEventListener("mousedown",h.onMouseDown);
+  game.renderer.domElement.removeEventListener("click",h.onClickCanvas);
+ }
+ game.renderer.dispose();
+ game.renderer.domElement.remove();
+ game=null;
+}
+function leaveGame(){
+ cleanupGame();
+ document.exitPointerLock?.();
+ $("game").style.display="none";
+ $("gameEnd").style.display="none";
+ showPage("home");
+}
+
+/* =========================================
+   STARTUP
+========================================= */
+window.addEventListener("beforeunload",()=>{
+ if(player)save();
+});
+if(loadPlayer()){
+ // Do not automatically log in: show the login screen.
+}
+</script>
+</body>
+</html>
